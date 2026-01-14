@@ -67,8 +67,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         # Template Selection Keyboard
         keyboard = [
             [InlineKeyboardButton("Template 1 (Standard)", callback_data="template_1")],
-            # Add more templates here in the future
-            # [InlineKeyboardButton("Template 2 (New)", callback_data="template_2")],
+            [InlineKeyboardButton("Template 2 (New)", callback_data="template_2")],
         ]
         reply_markup = InlineKeyboardMarkup(keyboard)
         
@@ -94,13 +93,8 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         default_assets_dir = os.path.dirname(base_dir)
         assets_dir = os.getenv("ASSETS_DIR", default_assets_dir)
         
-        template_map = {
-            "1": os.path.join(assets_dir, "final-template-without-para-date"),
-            # "2": "path/to/template2"
-        }
+        # Deprecated: Logic moved to image_generator.py, we just pass assets_dir and template_id
         
-        selected_template_dir = template_map.get(template_id, template_map["1"]) # Default to 1
-
         await query.edit_message_text(text=f"Generating **{day_label}'s** horoscopes using **Template {template_id}**... Please wait 📸", parse_mode='Markdown')
         
         try:
@@ -112,7 +106,7 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
                 date_on_image = f"{day_label} ({get_date_label(day)})"
 
             # Generate Images with selected template
-            image_paths = generate_horoscope_images(results, date_on_image, template_dir=selected_template_dir)
+            image_paths = generate_horoscope_images(results, date_on_image, template_id=template_id, assets_dir=assets_dir)
             
             # Create Media Group
             media_group = [InputMediaPhoto(open(path, 'rb')) for path in image_paths]

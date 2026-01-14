@@ -118,14 +118,69 @@ def fit_text_to_box(draw, text, box_width, box_height, start_font_size=24, min_f
         
     return font, lines, 24
 
-def generate_horoscope_images(horoscopes, date_label, template_dir=TEMPLATE_DIR):
+# Template Configurations
+TEMPLATE_CONFIGS = {
+    "1": {
+        "dir_name": "final-template-without-para-date",
+        "file_pattern": "zodiac_sign_template_page-{:04d}.jpg",
+        "date_coords": (221, 48, 863, 122), # (x1, y1, x2, y2)
+        "para1_coords": (242, 247, 1022, 548),
+        "para2_coords": (54, 712, 843, 1008),
+        "text_color": (230, 221, 212), # Off-white
+        "date_color": (28, 56, 33),   # Dark Green
+        "date_format": "full",        # Include year
+        "font_name_text": "text",
+        "font_name_date": "date"
+    },
+    "2": {
+        "dir_name": "Template-2",
+        "file_pattern": "{}.jpg",     # 1.jpg, 2.jpg...
+        "date_coords": (353, 43, 671, 99),
+        "para1_coords": (74, 313, 481, 959),
+        "para2_coords": (560, 314, 965, 960),
+        "text_color": (0, 0, 0),      # Black
+        "date_color": (255, 255, 255),# White
+        "date_format": "no_year",     # Exclude year
+        "font_name_text": "text",
+        "font_name_date": "date" 
+    }
+}
+
+def generate_horoscope_images(horoscopes, date_label, template_id="1", assets_dir=ASSETS_DIR):
     image_paths = []
+    
+    config = TEMPLATE_CONFIGS.get(template_id, TEMPLATE_CONFIGS["1"])
+    template_dir = os.path.join(assets_dir, config["dir_name"])
+    
+    # Pre-calculate dimensions from coords
+    # Date
+    dx1, dy1, dx2, dy2 = config["date_coords"]
+    date_center_x = (dx1 + dx2) // 2
+    date_center_y = (dy1 + dy2) // 2
+    
+    # Para 1
+    p1x1, p1y1, p1x2, p1y2 = config["para1_coords"]
+    p1_w = p1x2 - p1x1
+    p1_h = p1y2 - p1y1
+    
+    # Para 2
+    p2x1, p2y1, p2x2, p2y2 = config["para2_coords"]
+    p2_w = p2x2 - p2x1
+    p2_h = p2y2 - p2y1
+    
+    # Format Date Label if needed
+    display_date = date_label
+    if config["date_format"] == "no_year":
+        # Assumes date_label is like "14 January 2026"
+        parts = date_label.split()
+        if len(parts) >= 2:
+            display_date = f"{parts[0]} {parts[1]}"
     
     for i in range(0, 12, 2):
         if i >= len(horoscopes): break
         
         template_idx = (i // 2) + 1
-        template_filename = f"zodiac_sign_template_page-{template_idx:04d}.jpg"
+        template_filename = config["file_pattern"].format(template_idx)
         template_path = os.path.join(template_dir, template_filename)
         
         try:
@@ -139,20 +194,19 @@ def generate_horoscope_images(horoscopes, date_label, template_dir=TEMPLATE_DIR)
         draw = ImageDraw.Draw(img)
         
         # 1. Date
-        date_font = get_font('date', 47)
-        draw.text((DATE_CENTER_X, DATE_CENTER_Y), date_label, font=date_font, fill=DATE_COLOR, anchor="mm", align="center")
+        # Ensure bold for date if requested or default
+        date_font = get_font(config["font_name_date"], 47)
+        draw.text((date_center_x, date_center_y), display_date, font=date_font, fill=config["date_color"], anchor="mm", align="center")
         
         # 2. Top Sign
         sign1 = horoscopes[i]
-        draw_text_block(draw, sign1['text'], PARA1_X, PARA1_Y, PARA1_W, PARA1_H)
+        draw_text_block(draw, sign1['text'], p1x1, p1y1, p1_w, p1_h, color=config["text_color"])
         
         # 3. Bottom Sign
         if i+1 < len(horoscopes):
             sign2 = horoscopes[i+1]
-            draw_text_block(draw, sign2['text'], PARA2_X, PARA2_Y, PARA2_W, PARA2_H)
+            draw_text_block(draw, sign2['text'], p2x1, p2y1, p2_w, p2_h, color=config["text_color"])
             
-
-        
         filename = f"horoscope_{template_idx}.jpg"
         img.save(filename, quality=95)
         image_paths.append(filename)
@@ -161,7 +215,7 @@ def generate_horoscope_images(horoscopes, date_label, template_dir=TEMPLATE_DIR)
 
 
 
-def draw_text_block(draw, text, x, y, w, h):
+def draw_text_block(draw, text, x, y, w, h, color=TEXT_COLOR):
     font, lines, line_height = fit_text_to_box(
         draw, text, w, h, 
         start_font_size=24, min_font_size=16, font_name='text'
@@ -169,7 +223,7 @@ def draw_text_block(draw, text, x, y, w, h):
     
     current_y = y
     for line in lines:
-        draw.text((x, current_y), line, font=font, fill=TEXT_COLOR)
+        draw.text((x, current_y), line, font=font, fill=color)
         current_y += line_height
 
 if __name__ == "__main__":
