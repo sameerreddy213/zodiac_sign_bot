@@ -145,6 +145,13 @@ def main() -> None:
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CallbackQueryHandler(button))
 
+    # Start the keep-alive server
+    try:
+        from keep_alive import keep_alive
+        keep_alive()
+    except ImportError:
+        logger.warning("keep_alive module not found, skipping.")
+
     # Run the bot
     application.run_polling(allowed_updates=Update.ALL_TYPES)
 
