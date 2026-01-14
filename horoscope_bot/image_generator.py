@@ -139,7 +139,8 @@ TEMPLATE_CONFIGS = {
         "para1_coords": (74, 313, 481, 959),
         "para2_coords": (560, 314, 965, 960),
         "text_color": (0, 0, 0),      # Black
-        "date_color": (255, 255, 255),# White
+        # Ensure pure white
+        "date_color": (255, 255, 255),
         "date_format": "no_year",     # Exclude year
         "font_name_text": "text",
         "font_name_date": "date" 
@@ -157,6 +158,12 @@ def generate_horoscope_images(horoscopes, date_label, template_id="1", assets_di
     dx1, dy1, dx2, dy2 = config["date_coords"]
     date_center_x = (dx1 + dx2) // 2
     date_center_y = (dy1 + dy2) // 2
+    
+    # FIX: For Template 2, the user-provided coords (center 512) are slightly left of image center (540).
+    # Force horizontal centering for Date if it's Template 2 (or generally if close to center)
+    if template_id == "2":
+        date_center_x = 540 
+
     
     # Para 1
     p1x1, p1y1, p1x2, p1y2 = config["para1_coords"]
