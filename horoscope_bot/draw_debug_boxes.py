@@ -4,9 +4,9 @@ import os
 # Current Config from image_generator.py
 # Adjusted Para 2 X1 from 560 to 550 based on analysis to give more room
 CONFIG = {
-    "date_coords": (353, 43, 671, 99),
-    "para1_coords": (74, 313, 481, 959),
-    "para2_coords": (550, 314, 965, 960), # Changed 560 -> 550
+    "date_coords": (353, 53, 671, 109),
+    "para1_coords": (94, 333, 501, 979),
+    "para2_coords": (570, 334, 985, 980),
 }
 
 TEMPLATE_PATH = "d:/GITHUB REPOS/zodiac_sign_bot/Template-2/1.jpg"
