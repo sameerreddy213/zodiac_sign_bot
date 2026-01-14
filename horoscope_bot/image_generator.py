@@ -137,7 +137,7 @@ TEMPLATE_CONFIGS = {
         "file_pattern": "{}.jpg",     # 1.jpg, 2.jpg...
         "date_coords": (353, 43, 671, 99),
         "para1_coords": (74, 313, 481, 959),
-        "para2_coords": (560, 314, 965, 960),
+        "para2_coords": (550, 314, 965, 960), # Widened from 560 based on analysis
         "text_color": (0, 0, 0),      # Black
         # Ensure pure white
         "date_color": (255, 255, 255),
