@@ -135,7 +135,7 @@ TEMPLATE_CONFIGS = {
     "2": {
         "dir_name": "Template-2",
         "file_pattern": "{}.jpg",     # 1.jpg, 2.jpg...
-        "date_coords": (393, 43, 711, 99),    # Moved Right +40 total (20+20), Up -10 maintained
+        "date_coords": (383, 43, 701, 99),    # Moved Left -10 (Half of last +20 shift)
         "para1_coords": (94, 333, 501, 979),  
         "para2_coords": (600, 334, 1015, 980), 
         "text_color": (0, 0, 0),      # Black
