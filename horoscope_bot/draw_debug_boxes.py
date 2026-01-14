@@ -4,7 +4,7 @@ import os
 # Current Config from image_generator.py
 # Adjusted Para 2 X1 from 560 to 550 based on analysis to give more room
 CONFIG = {
-    "date_coords": (373, 43, 691, 99),
+    "date_coords": (393, 43, 711, 99),
     "para1_coords": (94, 333, 501, 979),
     "para2_coords": (600, 334, 1015, 980),
 }
