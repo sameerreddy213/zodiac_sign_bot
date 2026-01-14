@@ -135,9 +135,9 @@ TEMPLATE_CONFIGS = {
     "2": {
         "dir_name": "Template-2",
         "file_pattern": "{}.jpg",     # 1.jpg, 2.jpg...
-        "date_coords": (353, 53, 671, 109),   
+        "date_coords": (373, 43, 691, 99),    # Moved Right +20, Up -10 (Original Y was 43, then 53, now back to 43)
         "para1_coords": (94, 333, 501, 979),  
-        "para2_coords": (600, 334, 1015, 980), # Moved Right +30 (Total +50 from original)
+        "para2_coords": (600, 334, 1015, 980), 
         "text_color": (0, 0, 0),      # Black
         # Ensure pure white
         "date_color": (255, 255, 255),
@@ -159,11 +159,6 @@ def generate_horoscope_images(horoscopes, date_label, template_id="1", assets_di
     date_center_x = (dx1 + dx2) // 2
     date_center_y = (dy1 + dy2) // 2
     
-    # FIX: For Template 2, the user-provided coords (center 512) are slightly left of image center (540).
-    # Force horizontal centering for Date if it's Template 2 (or generally if close to center)
-    if template_id == "2":
-        date_center_x = 540 
-
     
     # Para 1
     p1x1, p1y1, p1x2, p1y2 = config["para1_coords"]
