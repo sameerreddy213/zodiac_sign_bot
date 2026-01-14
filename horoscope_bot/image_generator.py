@@ -24,8 +24,14 @@ PARA2_H = 1008 - 712 # 296
 
 TEXT_COLOR = (230, 221, 212)
 DATE_COLOR = (28, 56, 33) # Dark Green from analysis (Fix for visibility)
-TEMPLATE_DIR = "d:/zodiac sign pdf/final-template-without-para-date"
-FONT_DIR = "d:/zodiac sign pdf"
+# Dynamic Path Logic
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Default to parent directory of the script if ASSETS_DIR not set
+DEFAULT_ASSETS_DIR = os.path.dirname(BASE_DIR) 
+ASSETS_DIR = os.getenv("ASSETS_DIR", DEFAULT_ASSETS_DIR)
+
+TEMPLATE_DIR = os.path.join(ASSETS_DIR, "final-template-without-para-date")
+FONT_DIR = ASSETS_DIR
 
 def get_font(name, size):
     font_file = "arial.ttf"

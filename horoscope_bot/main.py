@@ -89,8 +89,13 @@ async def button(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
         if day == 1: day_label = "Tomorrow"
 
         # Map template_id to actual directory
+        # Use relative path from this script or an env var
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        default_assets_dir = os.path.dirname(base_dir)
+        assets_dir = os.getenv("ASSETS_DIR", default_assets_dir)
+        
         template_map = {
-            "1": "d:/zodiac sign pdf/final-template-without-para-date",
+            "1": os.path.join(assets_dir, "final-template-without-para-date"),
             # "2": "path/to/template2"
         }
         
