@@ -6,7 +6,7 @@ import os
 CONFIG = {
     "date_coords": (353, 53, 671, 109),
     "para1_coords": (94, 333, 501, 979),
-    "para2_coords": (570, 334, 985, 980),
+    "para2_coords": (600, 334, 1015, 980),
 }
 
 TEMPLATE_PATH = "d:/GITHUB REPOS/zodiac_sign_bot/Template-2/1.jpg"
