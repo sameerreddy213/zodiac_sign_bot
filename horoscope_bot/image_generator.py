@@ -151,10 +151,7 @@ def generate_horoscope_images(horoscopes, date_label, template_dir=TEMPLATE_DIR)
             sign2 = horoscopes[i+1]
             draw_text_block(draw, sign2['text'], PARA2_X, PARA2_Y, PARA2_W, PARA2_H)
             
-        # --- RESIZE FOR INSTAGRAM (4:5 Ratio) ---
-        # The user specifically requested this happens AFTER generation.
-        # We take the finished 1080x1080 img and fit it into 1080x1350.
-        img = convert_to_instagram_ratio(img)
+
         
         filename = f"horoscope_{template_idx}.jpg"
         img.save(filename, quality=95)
@@ -162,43 +159,7 @@ def generate_horoscope_images(horoscopes, date_label, template_dir=TEMPLATE_DIR)
         
     return image_paths
 
-def convert_to_instagram_ratio(square_img):
-    """
-    Converts a 1080x1080 image to 1080x1350 (4:5) for Instagram
-    by centering it and adding a blurred background.
-    """
-    target_width = 1080
-    target_height = 1350
-    
-    # 1. Create base canvas
-    canvas = Image.new('RGB', (target_width, target_height))
-    
-    # 2. Create Background (Zoomed & Blurred version of original)
-    # Resize original to cover the whole height, keeping aspect ratio
-    bg_img = square_img.copy()
-    # We need to scale it up so height >= 1350. 
-    # Current is 1080. Scale factor = 1350/1080 = 1.25
-    # Let's go a bit bigger to be safe
-    bg_img = bg_img.resize((int(1080 * 1.5), int(1080 * 1.5)), Image.Resampling.LANCZOS)
-    
-    # Blur it heavily
-    from PIL import ImageFilter
-    bg_img = bg_img.filter(ImageFilter.GaussianBlur(30))
-    
-    # Crop to target size (center crop)
-    left = (bg_img.width - target_width) // 2
-    top = (bg_img.height - target_height) // 2
-    bg_img = bg_img.crop((left, top, left + target_width, top + target_height))
-    
-    # Paste background
-    canvas.paste(bg_img, (0, 0))
-    
-    # 3. Paste Original Image in Center
-    # Text is usually centered, so placing the square in the vertical center works best.
-    y_pos = (target_height - square_img.height) // 2
-    canvas.paste(square_img, (0, y_pos))
-    
-    return canvas
+
 
 def draw_text_block(draw, text, x, y, w, h):
     font, lines, line_height = fit_text_to_box(
