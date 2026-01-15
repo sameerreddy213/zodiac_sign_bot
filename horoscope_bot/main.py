@@ -132,25 +132,28 @@ async def ask_credentials(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     query = update.callback_query
     await query.answer()
     
+    username = "daily_horoscopes_astrology"
+    context.user_data['ig_user'] = username
+    
     await query.message.reply_text(
-        "Please send your **Instagram Username and Password** separated by a space.\n"
-        "Example: `myuser mypassword123`\n\n"
-        "_(Credentials are only used for this session and not stored permenantly)_",
+        f"Please send your **Instagram Password** for account `{username}`.\n\n"
+        "_(Password is used only for this session and not stored permenantly)_",
         parse_mode='Markdown'
     )
     return ASK_CREDENTIALS
 
 async def receive_credentials(update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
-    """Receives credentials and asks for time."""
-    text = update.message.text.strip()
-    parts = text.split(' ', 1)
+    """Receives password and asks for time."""
+    password = update.message.text.strip()
     
-    if len(parts) != 2:
-        await update.message.reply_text("Invalid format. Please send `username password` separated by a space.")
-        return ASK_CREDENTIALS
+    # Simple check to avoid spaces if user mistakenly sends "user pass"
+    if " " in password:
+        # Heuristic: if user still sends "user pass", try to handle or just warn?
+        # User explicitly said "ask me for password only".
+        # We'll just take the whole text as password to be safe, or split if it looks like they ignored instruction.
+        # Let's assume they follow instructions. 
+        pass
     
-    username, password = parts
-    context.user_data['ig_user'] = username
     context.user_data['ig_pass'] = password
     
     # Delete the message with password for security
