@@ -15,18 +15,16 @@ Managing a daily horoscope page involves repetitive tasks:
 5.  Manually posting them to Instagram.
 
 **The Solution:**
-This bot automates the entire workflow!
+This bot automates the workflow!
 -   **Scrapes** daily horoscope data automatically.
 -   **Generates** aesthetic images using Python (Pillow) with custom fonts and templates.
--   **Sends** the generated images to a Telegram Bot for review.
--   **Auto-posts** to Instagram with a single click, including captions and hashtags.
+-   **Sends** the generated images to a Telegram Bot for review and download.
 
 ## ✨ Features
 
 -   **Automated Scraping**: Fetches accurate daily horoscope data for all zodiac signs.
 -   **Dynamic Image Generation**: Uses `Pillow` to create high-quality, Instagram-ready images with custom fonts (Archivo Black, Glacial Indifference).
 -   **Telegram Interface**: Control the bot via Telegram to select dates (Yesterday/Today/Tomorrow) and design templates.
--   **Instagram Integration**: Uses `instagrapi` to schedule or post directly to Instagram.
 -   **Containerized**: Includes a `Dockerfile` for easy deployment.
 
 ## 🛠️ Tech Stack
@@ -35,8 +33,6 @@ This bot automates the entire workflow!
 -   **Telegram Bot API** (`python-telegram-bot`)
 -   **Image Processing**: `Pillow` (PIL)
 -   **Web Scraping**: `requests`, `beautifulsoup4`
--   **Instagram API**: `instagrapi`
--   **Scheduling**: `APScheduler`
 -   **Deployment**: Docker
 
 ## 📂 Project Structure
@@ -47,7 +43,6 @@ zodiac_sign_bot/
 │   ├── main.py            # Bot entry point and Telegram handlers
 │   ├── scraper.py         # Logic to fetch horoscope text
 │   ├── image_generator.py # Logic to create images from text
-│   ├── instagram_manager.py # Handles Instagram login and posting
 │   └── requirements.txt   # Python dependencies
 ├── Template-2/            # Assets for design template 2
 ├── final-template.../     # Assets for standard design template

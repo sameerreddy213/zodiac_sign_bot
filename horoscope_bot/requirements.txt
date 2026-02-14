@@ -6,6 +6,4 @@ python-dotenv
 Pillow
 flask
 gunicorn
-instagrapi
-APScheduler
-pytz
+
