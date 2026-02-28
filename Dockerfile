@@ -6,6 +6,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-telu \
     && rm -rf /var/lib/apt/lists/*
 
+# Set the working directory in the container
+WORKDIR /app
+
 # Copy the requirements file into the container at /app
 COPY horoscope_bot/requirements.txt /app/requirements.txt
 
