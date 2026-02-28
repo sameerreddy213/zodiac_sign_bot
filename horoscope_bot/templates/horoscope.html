@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="te">
+
+<head>
+    <meta charset="UTF-8">
+    <style>
+        __FONT_FACE_CSS__ body {
+            margin: 0;
+            padding: 0;
+            width: 1080px;
+            height: 1080px;
+            background-color: transparent;
+            font-family: __FONT_FAMILY__;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #template-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 1080px;
+            height: 1080px;
+            z-index: -1;
+        }
+
+        .date-container {
+            position: absolute;
+            left: __DATE_RX__px;
+            top: __DATE_RY__px;
+            width: __DATE_RW__px;
+            height: __DATE_RH__px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: rgb(__DATE_R__, __DATE_G__, __DATE_B__);
+            font-size: 47px;
+            font-weight: 800;
+        }
+
+        .text-block-1 {
+            position: absolute;
+            left: __P1_RX__px;
+            top: __P1_RY__px;
+            width: __P1_RW__px;
+            height: __P1_RH__px;
+            color: rgb(__TEXT_R__, __TEXT_G__, __TEXT_B__);
+            font-weight: 900;
+            font-size: 24px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+
+        .text-block-2 {
+            position: absolute;
+            left: __P2_RX__px;
+            top: __P2_RY__px;
+            width: __P2_RW__px;
+            height: __P2_RH__px;
+            color: rgb(__TEXT_R__, __TEXT_G__, __TEXT_B__);
+            font-weight: 900;
+            font-size: 24px;
+            line-height: 1.6;
+            text-align: justify;
+        }
+    </style>
+</head>
+
+<body>
+    <img id="template-bg" src="file:///__TEMPLATE_PATH__" />
+
+    <div class="date-container">__DISPLAY_DATE__</div>
+
+    <div class="text-block-1" id="tb1">__TEXT1__</div>
+
+    <div class="text-block-2" id="tb2">__TEXT2__</div>
+
+    <script>
+        function autoFit(elementId, maxHeight) {
+            const el = document.getElementById(elementId);
+            if (!el) return;
+            let currentSize = 25;
+            while (el.scrollHeight > maxHeight && currentSize > 14) {
+                currentSize--;
+                el.style.fontSize = currentSize + 'px';
+            }
+        }
+        autoFit('tb1', __P1_RH__);
+        autoFit('tb2', __P2_RH__);
+    </script>
+</body>
+
+</html>

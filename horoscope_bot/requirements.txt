@@ -1,9 +1,14 @@
-python-telegram-bot
+python-telegram-bot>=21.0.0
 requests
 beautifulsoup4
 lxml
 python-dotenv
 Pillow
+pytz
+schedule
 flask
 gunicorn
-
+pymongo
+dnspython
+googletrans==4.0.0-rc1
+tzlocal<3.0

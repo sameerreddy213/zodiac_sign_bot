@@ -62,47 +62,99 @@ def fetch_horoscope(sign: str, day: int = 0):
                 # but this is the best effort given the structure.
         
         if not text:
+            logger.warning(f"Could not retrieve text for {sign} on day {day}. Text div missing or empty.")
             return {"sign": sign, "text": "Could not retrieve text.", "date": "Unknown", "count": 0}
 
         count = len(text)
+        logger.info(f"Successfully scraped {sign} (Day {day}, length: {count})")
         return {"sign": sign, "text": text, "date": date, "count": count}
 
 
     except Exception as e:
-        logger.error(f"Error fetching {sign}: {e}")
+        logger.error(f"Error fetching {sign} (Day {day}): {e}")
         return {"sign": sign, "text": "Error fetching data.", "count": 0}
 
 
 
-def fetch_all_horoscopes(day: int):
-    """
-    Fetches horoscopes for all 12 signs concurrently.
-    """
+def _scrape_offset(day: int):
     results = []
     with concurrent.futures.ThreadPoolExecutor(max_workers=4) as executor:
-        # Fetch raw text
         future_to_sign = {executor.submit(fetch_horoscope, sign, day): sign for sign in ZODIAC_SIGNS}
-        
         for future in concurrent.futures.as_completed(future_to_sign):
             try:
                 data = future.result()
                 results.append(data)
             except Exception as exc:
                 logger.error(f"Generated an exception: {exc}")
-
-    # Now enhance text (sequentially or parallel? Parallel is faster but rate limits might apply. Let's do parallel 4 workers)
-    # Actually, let's just do it in the same loop or a second pass. 
-    # Let's do a second pass for enhancement to keep logic clean.
-    
-    # Sort results to maintain zodiac order
     results.sort(key=lambda x: ZODIAC_SIGNS.index(x['sign']))
     return results
+
+def get_horoscopes_by_date(target_date: str, language: str = "english", fallback_offset: int = None):
+    """
+    Fetches horoscopes exactly by the target date string.
+    If not in DB, it scrapes using the optionally provided fallback_offset and caches it.
+    """
+    import db
+    
+    # 1. Check DB Cache explicitly for this date and language
+    cached_data = db.get_horoscopes(target_date, language=language)
+    if cached_data:
+        logger.info(f"Returning CACHED data for {target_date} ({language}).")
+        return cached_data
+
+    logger.info(f"No {language} cache found for {target_date}. Need to fetch/translate...")
+    
+    # If asking for Telugu, we can check if English is cached first to save scraping time
+    if language == "telugu":
+        english_data = db.get_horoscopes(target_date, language="english")
+        if english_data:
+            from translator import translate_to_telugu
+            logger.info("Translating existing English DB cache to Telugu...")
+            telugu_results = []
+            for res in english_data:
+                telugu_res = res.copy()
+                telugu_res['text'] = translate_to_telugu(res['text'])
+                telugu_results.append(telugu_res)
+            db.save_horoscopes(target_date, telugu_results, language="telugu")
+            return telugu_results
+            
+    # 2. Not in Cache - Fetch From Website ONLY if we have an offset
+    if fallback_offset is not None:
+        logger.info(f"Scraping source website offset {fallback_offset} for expected date {target_date}...")
+        results = _scrape_offset(fallback_offset)
+        
+        if results and len(results) == 12:
+            fetched_date = results[0].get('date', target_date)
+            
+            # Save English baseline to DB 
+            logger.info(f"Saving scraped English data for {fetched_date} into DB.")
+            db.save_horoscopes(fetched_date, results, language="english")
+            db.cleanup_old_horoscopes(1, language="english")
+            
+            if language == "telugu":
+                from translator import translate_to_telugu
+                logger.info("Translating freshly scraped data to Telugu...")
+                telugu_results = []
+                for res in results:
+                    telugu_res = res.copy()
+                    telugu_res['text'] = translate_to_telugu(res['text'])
+                    telugu_results.append(telugu_res)
+                db.save_horoscopes(fetched_date, telugu_results, language="telugu")
+                db.cleanup_old_horoscopes(1, language="telugu")
+                return telugu_results
+            
+            return results
+        else:
+            logger.warning("Scrape failed to return 12 signs.")
+            
+    return None
 
 if __name__ == "__main__":
     # Test run for Today
     print("Fetching Today's Horoscopes...")
-    daily_results = fetch_all_horoscopes(0)
-    for res in daily_results[:2]: # Print first 2 to check
-        print(f"--- {res['sign'].upper()} ---")
-        print(res['text'])
-        print(f"Count: {res['count']}\n")
+    daily_results = get_horoscopes_by_date("28 February 2026", fallback_offset=0)
+    if daily_results:
+        for res in daily_results[:2]: 
+            print(f"--- {res['sign'].upper()} ---")
+            print(res['text'])
+            print(f"Count: {res['count']}\n")

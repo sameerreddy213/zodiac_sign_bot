@@ -1,5 +1,5 @@
-
 from datetime import datetime, timedelta
+import pytz
 
 def get_date_label(day_offset):
     """
@@ -8,5 +8,6 @@ def get_date_label(day_offset):
     offset 0: Today
     offset 1: Tomorrow
     """
-    target_date = datetime.now() + timedelta(days=day_offset)
+    ist = pytz.timezone('Asia/Kolkata')
+    target_date = datetime.now(ist) + timedelta(days=day_offset)
     return target_date.strftime("%b %d")
