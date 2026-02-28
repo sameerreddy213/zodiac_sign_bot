@@ -10,5 +10,5 @@ flask
 gunicorn
 pymongo
 dnspython
-googletrans==4.0.0-rc1
-tzlocal<3.0
+deep-translator
+playwright
