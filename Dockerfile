@@ -1,8 +1,10 @@
 # Use the official Microsoft Playwright image which contains all necessary Chromium system dependencies natively
 FROM mcr.microsoft.com/playwright/python:v1.41.0-jammy
 
-# Set the working directory in the container
-WORKDIR /app
+# Install system dependencies required for Telugu font shaping
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fonts-telu \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy the requirements file into the container at /app
 COPY horoscope_bot/requirements.txt /app/requirements.txt

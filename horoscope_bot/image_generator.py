@@ -110,11 +110,14 @@ def generate_horoscope_images(horoscopes, date_label, template_id="1", language=
         page = browser.new_page(viewport={"width": 1080, "height": 1080})
         
         if language == "telugu":
-            custom_font_path = os.path.join(assets_dir, "fonts", "Potti Sreeramulu Regular.otf").replace("\\", "/")
+            custom_font_path = os.path.join(assets_dir, "fonts", "Potti Sreeramulu Regular.otf")
+            with open(custom_font_path, "rb") as font_file:
+                b64_font = base64.b64encode(font_file.read()).decode('utf-8')
+                
             font_face_css = f'''
                 @font-face {{
                     font-family: 'Potti Sreeramulu';
-                    src: url('file:///{custom_font_path}');
+                    src: url('data:font/opentype;charset=utf-8;base64,{b64_font}') format('opentype');
                 }}
             '''
             font_family = "'Potti Sreeramulu', 'Nirmala UI', sans-serif"
